@@ -1,11 +1,11 @@
 {
   "name": "callor-word-master",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 12320",
+    "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
@@ -23,16 +23,16 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^26",
+    "@types/node": "^20",
     "@types/pg": "^8.20.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^17.4.2",
-    "eslint": "^10",
+    "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "prisma": "^7.9.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.5",
-    "typescript": "^7"
+    "typescript": "^5"
   }
 }
