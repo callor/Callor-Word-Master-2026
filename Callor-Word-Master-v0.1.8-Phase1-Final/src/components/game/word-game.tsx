@@ -1,7 +1,24 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Code2, Flame, Gamepad2, Maximize2, Minimize2, Moon, Pause, Play, RotateCcw, Sparkles, Sun, Trophy, UserRound, Volume2, VolumeX, X } from "lucide-react";
+import {
+  Code2,
+  Flame,
+  Gamepad2,
+  Maximize2,
+  Minimize2,
+  Moon,
+  Pause,
+  Play,
+  RotateCcw,
+  Sparkles,
+  Sun,
+  Trophy,
+  UserRound,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
 import { conversationWords, type ConversationWord } from "@/data/conversation-words";
 
 type Theme = "light" | "dark";
@@ -19,6 +36,8 @@ type FallingWord = {
 };
 
 const PLAY_WORDS = conversationWords.filter((word) => word.difficulty === "BEGINNER");
+const MAX_LIVES = 5;
+
 const LANES = [12, 27, 42, 58, 73, 88];
 
 function randomWordSpeed() {
@@ -79,7 +98,7 @@ export function WordGame() {
   const [input, setInput] = useState("");
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
-  const [lives, setLives] = useState(3);
+  const [lives, setLives] = useState(MAX_LIVES);
   const [cleared, setCleared] = useState(0);
   const [missed, setMissed] = useState(0);
   const [feedback, setFeedback] = useState("화면의 영단어 중 하나를 선택해 입력하세요");
@@ -96,7 +115,7 @@ export function WordGame() {
   const selectedIdRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
   const gameOverRef = useRef(false);
-  const livesRef = useRef(3);
+  const livesRef = useRef(MAX_LIVES);
   const soundEnabledRef = useRef(true);
   const audioContextRef = useRef<AudioContext | null>(null);
   const nextIdRef = useRef(7);
@@ -209,7 +228,13 @@ export function WordGame() {
           setSelectedId(null);
           setInput("");
         }
-        setFeedback(livesRef.current === 0 ? "게임 오버! 결과를 확인하고 다시 도전하세요." : missCount > 1 ? `${missCount}개 단어를 놓쳤어요. 다음 단어에 집중하세요!` : "단어를 놓쳤어요. 다음 단어에 집중하세요!");
+        setFeedback(
+          livesRef.current === 0
+            ? "게임 오버! 결과를 확인하고 다시 도전하세요."
+            : missCount > 1
+              ? `${missCount}개 단어를 놓쳤어요. 다음 단어에 집중하세요!`
+              : "단어를 놓쳤어요. 다음 단어에 집중하세요!",
+        );
       }
       commitWords(next);
     }, 40);
@@ -283,7 +308,8 @@ export function WordGame() {
 
     if (selectedId === null) {
       const target = wordsRef.current.find(
-        (item) => item.phase === "english" && item.word.english.toLowerCase() === answer.toLowerCase(),
+        (item) =>
+          item.phase === "english" && item.word.english.toLowerCase() === answer.toLowerCase(),
       );
       if (!target) {
         playTone(180, 0.12);
@@ -295,7 +321,9 @@ export function WordGame() {
 
       const meaning = pickMeaning(target.word, lastMeaningRef.current[target.word.english]);
       lastMeaningRef.current[target.word.english] = meaning;
-      const next = wordsRef.current.map((item) => item.id === target.id ? { ...item, meaning, phase: "meaning" as const } : item);
+      const next = wordsRef.current.map((item) =>
+        item.id === target.id ? { ...item, meaning, phase: "meaning" as const } : item,
+      );
       commitWords(next);
       selectedIdRef.current = target.id;
       setSelectedId(target.id);
@@ -316,7 +344,9 @@ export function WordGame() {
       return;
     }
 
-    const clearedWords = wordsRef.current.map((item) => item.id === target.id ? { ...item, phase: "cleared" as const, burst: true } : item);
+    const clearedWords = wordsRef.current.map((item) =>
+      item.id === target.id ? { ...item, phase: "cleared" as const, burst: true } : item,
+    );
     commitWords(clearedWords);
     setScore((value) => value + 10);
     setCombo((value) => value + 1);
@@ -331,7 +361,9 @@ export function WordGame() {
 
     const timeout = setTimeout(() => {
       const current = wordsRef.current;
-      const next = current.map((item) => item.id === target.id ? replacement(item.lane, current) : item);
+      const next = current.map((item) =>
+        item.id === target.id ? replacement(item.lane, current) : item,
+      );
       commitWords(next);
       focusTypingInput();
     }, randomSpawnDelay());
@@ -343,7 +375,13 @@ export function WordGame() {
     const next = !paused;
     pausedRef.current = next;
     setPaused(next);
-    setFeedback(next ? "게임을 잠시 멈췄습니다" : selectedIdRef.current ? "선택한 단어의 한글 뜻을 입력하세요" : "화면의 영단어 중 하나를 선택해 입력하세요");
+    setFeedback(
+      next
+        ? "게임을 잠시 멈췄습니다"
+        : selectedIdRef.current
+          ? "선택한 단어의 한글 뜻을 입력하세요"
+          : "화면의 영단어 중 하나를 선택해 입력하세요",
+    );
     if (!next) focusTypingInput();
   };
 
@@ -359,7 +397,7 @@ export function WordGame() {
     setScore(0);
     setCombo(0);
     setLives(3);
-    livesRef.current = 3;
+    livesRef.current = MAX_LIVES;
     setGameOver(false);
     gameOverRef.current = false;
     setPaused(false);
@@ -376,38 +414,102 @@ export function WordGame() {
     <main className="app-shell">
       <header className="topbar">
         <div className="brand" aria-label="Callor Word Master">
-          <span className="brand-mark"><Flame size={21} strokeWidth={2.3} /></span>
-          <span><strong>Callor</strong> Word Master</span>
+          <span className="brand-mark">
+            <Flame size={21} strokeWidth={2.3} />
+          </span>
+          <span>
+            <strong>Callor</strong> Word Master
+          </span>
         </div>
         <nav className="top-actions" aria-label="사용자 메뉴">
-          <span className="word-count">동시 출제 <strong>6</strong> · 기본 단어 <strong>200</strong></span>
-          <button className="icon-button" onClick={toggleTheme} aria-label={theme === "light" ? "다크 테마" : "라이트 테마"}>
+          <span className="word-count">
+            동시 출제 <strong>6</strong> · 기본 단어 <strong>200</strong>
+          </span>
+          <button
+            className="icon-button"
+            onClick={toggleTheme}
+            aria-label={theme === "light" ? "다크 테마" : "라이트 테마"}
+          >
             {theme === "light" ? <Moon size={19} /> : <Sun size={19} />}
           </button>
-          <button className="login-button" type="button"><UserRound size={17} /> 로그인 <span>예정</span></button>
+          <button className="login-button" type="button">
+            <UserRound size={17} /> 로그인 <span>예정</span>
+          </button>
         </nav>
       </header>
 
       <section className="game-layout">
         <aside className="side-panel intro-panel">
-          <div className="brand-hero-mark"><Flame size={30} strokeWidth={2.2} /></div>
+          <div className="brand-hero-mark">
+            <Flame size={30} strokeWidth={2.2} />
+          </div>
           <p className="eyebrow">ENGLISH · KOREAN · MEMORY</p>
-          <h1><em>Callor</em><br />Word Master</h1>
-          <p className="intro-copy">영문 타자와 한글 타자를 함께 연습하며 회화 단어를 자연스럽게 기억하는 타이핑 게임입니다.</p>
+          <h1>
+            <em>Callor</em>
+            <br />
+            Word Master
+          </h1>
+          <p className="intro-copy">
+            영문 타자와 한글 타자를 함께 연습하며 회화 단어를 자연스럽게 기억하는 타이핑 게임입니다.
+          </p>
           <div className="steps" aria-label="게임 단계">
-            <div className={selectedId === null ? "step active" : "step"}><span>1</span><div><strong>단어 선택</strong><small>보이는 영단어 중 하나를 입력</small></div></div>
-            <div className={selectedId !== null ? "step active" : "step"}><span>2</span><div><strong>한글 타이핑</strong><small>선택한 단어의 뜻을 입력</small></div></div>
-            <div className="step"><span>3</span><div><strong>기억 완성</strong><small>단어 하나마다 10점 획득</small></div></div>
+            <div className={selectedId === null ? "step active" : "step"}>
+              <span>1</span>
+              <div>
+                <strong>단어 선택</strong>
+                <small>보이는 영단어 중 하나를 입력</small>
+              </div>
+            </div>
+            <div className={selectedId !== null ? "step active" : "step"}>
+              <span>2</span>
+              <div>
+                <strong>한글 타이핑</strong>
+                <small>선택한 단어의 뜻을 입력</small>
+              </div>
+            </div>
+            <div className="step">
+              <span>3</span>
+              <div>
+                <strong>기억 완성</strong>
+                <small>단어 하나마다 10점 획득</small>
+              </div>
+            </div>
           </div>
         </aside>
 
-        <section className={`game-card${effectsEnabled ? "" : " effects-off"}`} aria-label="다중 단어 타자 연습 게임">
+        <section
+          className={`game-card${effectsEnabled ? "" : " effects-off"}`}
+          aria-label="다중 단어 타자 연습 게임"
+        >
           <div className="scorebar">
-            <div><small>POINT</small><strong>{score.toLocaleString()}</strong></div>
-            <div><small>COMBO</small><strong>{combo}<span>x</span></strong></div>
-            <div><small>LIFE</small><strong className="lives" aria-label={`남은 기회 ${lives}`}>{"●".repeat(lives)}{"○".repeat(Math.max(0, 3-lives))}</strong></div>
-            <button onClick={togglePause} className="round-control" aria-label={paused ? "계속하기" : "일시정지"}>
-              {paused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
+            <div>
+              <small>POINT</small>
+              <strong>{score.toLocaleString()}</strong>
+            </div>
+            <div>
+              <small>COMBO</small>
+              <strong>
+                {combo}
+                <span>x</span>
+              </strong>
+            </div>
+            <div>
+              <small>LIFE</small>
+              <strong className="lives" aria-label={`남은 기회 ${lives}`}>
+                {"●".repeat(lives)}
+                {"○".repeat(Math.max(0, MAX_LIVES - lives))}
+              </strong>
+            </div>
+            <button
+              onClick={togglePause}
+              className="round-control"
+              aria-label={paused ? "계속하기" : "일시정지"}
+            >
+              {paused ? (
+                <Play size={18} fill="currentColor" />
+              ) : (
+                <Pause size={18} fill="currentColor" />
+              )}
             </button>
           </div>
 
@@ -420,14 +522,46 @@ export function WordGame() {
                 className={`falling-word phase-${item.phase}${item.id === selectedId ? " selected" : ""}`}
                 style={{ left: `${item.lane}%`, top: `${item.y}%` }}
               >
-                {item.burst && effectsEnabled && <span className="burst" aria-hidden="true">{Array.from({ length: 16 }).map((_, index) => <i key={index} />)}</span>}
-                <span className="english-word" style={{ fontSize: `${wordFontSize}pt` }}>{item.word.english}</span>
-                {item.meaning && <span className="meaning-word" style={{ fontSize: `${wordFontSize}pt` }}>{item.meaning}</span>}
+                {item.burst && effectsEnabled && (
+                  <span className="burst" aria-hidden="true">
+                    {Array.from({ length: 16 }).map((_, index) => (
+                      <i key={index} />
+                    ))}
+                  </span>
+                )}
+                <span className="english-word" style={{ fontSize: `${wordFontSize}pt` }}>
+                  {item.word.english}
+                </span>
+                {item.meaning && (
+                  <span className="meaning-word" style={{ fontSize: `${wordFontSize}pt` }}>
+                    {item.meaning}
+                  </span>
+                )}
               </div>
             ))}
-            <div className="danger-line"><span>LIMIT LINE</span></div>
-            {paused && !gameOver && !showTutorial && <div className="pause-layer"><Pause size={28} /><strong>PAUSED</strong><span>계속 버튼을 눌러 주세요</span></div>}
-            {gameOver && <div className="game-over-layer"><Gamepad2 size={34} /><small>FINAL SCORE</small><strong>{score.toLocaleString()}</strong><p>{cleared}개 클리어 · 콤보 {combo}</p><button type="button" onClick={resetGame}><RotateCcw size={16} /> 다시 시작</button></div>}
+            <div className="danger-line">
+              <span>LIMIT LINE</span>
+            </div>
+            {paused && !gameOver && !showTutorial && (
+              <div className="pause-layer">
+                <Pause size={28} />
+                <strong>PAUSED</strong>
+                <span>계속 버튼을 눌러 주세요</span>
+              </div>
+            )}
+            {gameOver && (
+              <div className="game-over-layer">
+                <Gamepad2 size={34} />
+                <small>FINAL SCORE</small>
+                <strong>{score.toLocaleString()}</strong>
+                <p>
+                  {cleared}개 클리어 · 콤보 {combo}
+                </p>
+                <button type="button" onClick={resetGame}>
+                  <RotateCcw size={16} /> 다시 시작
+                </button>
+              </div>
+            )}
           </div>
 
           <form className="typing-panel" onSubmit={submit}>
@@ -435,14 +569,18 @@ export function WordGame() {
             <label htmlFor="typing-input">
               <span className="input-label">
                 {selectedWord ? "선택된 단어의 한글 뜻" : "영단어 선택 타이핑"}
-                <b className={selectedWord ? "ime-badge korean" : "ime-badge english"}>{selectedWord ? "한글" : "ENG"}</b>
+                <b className={selectedWord ? "ime-badge korean" : "ime-badge english"}>
+                  {selectedWord ? "한글" : "ENG"}
+                </b>
               </span>
               <input
                 ref={inputRef}
                 id="typing-input"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder={selectedWord ? `“${selectedWord.meaning}” 입력` : "화면의 영단어 중 하나 입력"}
+                placeholder={
+                  selectedWord ? `“${selectedWord.meaning}” 입력` : "화면의 영단어 중 하나 입력"
+                }
                 autoComplete="off"
                 autoCapitalize="none"
                 spellCheck={false}
@@ -458,55 +596,170 @@ export function WordGame() {
                 }}
               />
             </label>
-            <button type="submit" disabled={paused}>ENTER</button>
+            <button type="submit" disabled={paused}>
+              ENTER
+            </button>
           </form>
-          <p className={`feedback ${feedback.includes("다시") || feedback.includes("놓쳤") ? "warning" : ""}`} aria-live="polite">{feedback}</p>
+          <p
+            className={`feedback ${feedback.includes("다시") || feedback.includes("놓쳤") ? "warning" : ""}`}
+            aria-live="polite"
+          >
+            {feedback}
+          </p>
         </section>
 
         <aside className="side-panel stats-panel">
           <div className="level-card">
-            <span className="level-icon"><Trophy size={21} /></span>
-            <div><small>CURRENT LEVEL</small><strong>BEGINNER · 6 WORDS</strong></div>
+            <span className="level-icon">
+              <Trophy size={21} />
+            </span>
+            <div>
+              <small>CURRENT LEVEL</small>
+              <strong>BEGINNER · 6 WORDS</strong>
+            </div>
           </div>
           <div className="font-card">
-            <div className="card-heading"><span>단어 글자 크기</span><strong>{wordFontSize}pt</strong></div>
+            <div className="card-heading">
+              <span>단어 글자 크기</span>
+              <strong>{wordFontSize}pt</strong>
+            </div>
             <div className="font-options" role="group" aria-label="단어 글자 크기 선택">
               {[10, 12, 15, 20, 25].map((size) => (
-                <button key={size} className={wordFontSize === size ? "active" : ""} onClick={() => changeWordFontSize(size)} type="button">{size}</button>
+                <button
+                  key={size}
+                  className={wordFontSize === size ? "active" : ""}
+                  onClick={() => changeWordFontSize(size)}
+                  type="button"
+                >
+                  {size}
+                </button>
               ))}
             </div>
           </div>
           <div className="settings-card">
-            <div className="card-heading"><span>플레이 설정</span><button type="button" onClick={() => { setShowTutorial(true); pausedRef.current = true; setPaused(true); }} aria-label="게임 방법 보기">?</button></div>
+            <div className="card-heading">
+              <span>플레이 설정</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTutorial(true);
+                  pausedRef.current = true;
+                  setPaused(true);
+                }}
+                aria-label="게임 방법 보기"
+              >
+                ?
+              </button>
+            </div>
             <div className="setting-actions">
-              <button type="button" className={soundEnabled ? "active" : ""} onClick={toggleSound}>{soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />} 소리</button>
-              <button type="button" className={effectsEnabled ? "active" : ""} onClick={toggleEffects}><Sparkles size={15} /> 효과</button>
-              <button type="button" onClick={toggleFullscreen}>{fullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />} 전체화면</button>
+              <button type="button" className={soundEnabled ? "active" : ""} onClick={toggleSound}>
+                {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />} 소리
+              </button>
+              <button
+                type="button"
+                className={effectsEnabled ? "active" : ""}
+                onClick={toggleEffects}
+              >
+                <Sparkles size={15} /> 효과
+              </button>
+              <button type="button" onClick={toggleFullscreen}>
+                {fullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />} 전체화면
+              </button>
             </div>
           </div>
           <div className="today-card">
-            <div className="card-heading"><span>오늘의 기록</span><button onClick={resetGame} aria-label="기록 초기화"><RotateCcw size={16} /></button></div>
-            <dl><div><dt>클리어</dt><dd>{cleared}<small>단어</small></dd></div><div><dt>놓친 단어</dt><dd>{missed}<small>단어</small></dd></div><div><dt>정확도</dt><dd>{cleared + missed ? Math.round(cleared / (cleared + missed) * 100) : 100}<small>%</small></dd></div></dl>
+            <div className="card-heading">
+              <span>오늘의 기록</span>
+              <button onClick={resetGame} aria-label="기록 초기화">
+                <RotateCcw size={16} />
+              </button>
+            </div>
+            <dl>
+              <div>
+                <dt>클리어</dt>
+                <dd>
+                  {cleared}
+                  <small>단어</small>
+                </dd>
+              </div>
+              <div>
+                <dt>놓친 단어</dt>
+                <dd>
+                  {missed}
+                  <small>단어</small>
+                </dd>
+              </div>
+              <div>
+                <dt>정확도</dt>
+                <dd>
+                  {cleared + missed ? Math.round((cleared / (cleared + missed)) * 100) : 100}
+                  <small>%</small>
+                </dd>
+              </div>
+            </dl>
           </div>
           <div className="coming-card">
-            <div className="provider-icons"><span>G</span><span><Code2 size={18} /></span><span>Ka</span><span>N</span></div>
+            <div className="provider-icons">
+              <span>G</span>
+              <span>
+                <Code2 size={18} />
+              </span>
+              <span>Ka</span>
+              <span>N</span>
+            </div>
             <strong>회원 기능은 2단계에서</strong>
             <p>Google·GitHub 로그인과 PostgreSQL 기록 저장이 연결됩니다.</p>
           </div>
         </aside>
       </section>
 
-      <footer className="footer-note"><span>CopyRight HanQube Solution</span><i /><a href="mailto:callor@callor.com">callor@callor.com</a><b>Callor Word Master v0.1.8 · Phase 1 Final</b></footer>
-      {showTutorial && <div className="tutorial-backdrop" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
-        <div className="tutorial-card">
-          <button className="tutorial-close" type="button" onClick={closeTutorial} aria-label="게임 방법 닫기"><X size={18} /></button>
-          <span className="tutorial-icon"><Flame size={28} /></span>
-          <p className="eyebrow">HOW TO PLAY</p>
-          <h2 id="tutorial-title">두 번 타이핑하면 기억 완성!</h2>
-          <ol><li><b>영단어 선택</b><span>내려오는 단어 중 하나를 영문으로 입력합니다.</span></li><li><b>한글 뜻 입력</b><span>무작위로 나온 한글 뜻을 그대로 입력합니다.</span></li><li><b>폭발 &amp; 점수</b><span>단어가 사라지고 10점이 쌓입니다. 제한선 전에 도전하세요.</span></li></ol>
-          <button className="tutorial-start" type="button" onClick={closeTutorial}>게임 시작</button>
+      <footer className="footer-note">
+        <span>CopyRight HanQube Solution</span>
+        <i />
+        <a href="mailto:callor@callor.com">callor@callor.com</a>
+        <b>Callor Word Master v0.1.8 · Phase 1 Final</b>
+      </footer>
+      {showTutorial && (
+        <div
+          className="tutorial-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tutorial-title"
+        >
+          <div className="tutorial-card">
+            <button
+              className="tutorial-close"
+              type="button"
+              onClick={closeTutorial}
+              aria-label="게임 방법 닫기"
+            >
+              <X size={18} />
+            </button>
+            <span className="tutorial-icon">
+              <Flame size={28} />
+            </span>
+            <p className="eyebrow">HOW TO PLAY</p>
+            <h2 id="tutorial-title">두 번 타이핑하면 기억 완성!</h2>
+            <ol>
+              <li>
+                <b>영단어 선택</b>
+                <span>내려오는 단어 중 하나를 영문으로 입력합니다.</span>
+              </li>
+              <li>
+                <b>한글 뜻 입력</b>
+                <span>무작위로 나온 한글 뜻을 그대로 입력합니다.</span>
+              </li>
+              <li>
+                <b>폭발 &amp; 점수</b>
+                <span>단어가 사라지고 10점이 쌓입니다. 제한선 전에 도전하세요.</span>
+              </li>
+            </ol>
+            <button className="tutorial-start" type="button" onClick={closeTutorial}>
+              게임 시작
+            </button>
+          </div>
         </div>
-      </div>}
+      )}
     </main>
   );
 }
