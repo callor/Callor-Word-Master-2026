@@ -1,0 +1,40 @@
+{
+  "name": "callor-word-master",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run typecheck && next build",
+    "start": "next start -p 12320",
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "typecheck": "node node_modules/@typescript/native/bin/tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "lucide-react": "^1.28.0",
+    "next": "16.3.6",
+    "pg": "^8.22.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^26",
+    "@types/pg": "^8.20.4",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "dotenv": "^17.4.2",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.6",
+    "prisma": "^7.9.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.7",
+    "typescript": "npm:@typescript/typescript6@6.0.2"
+  }
+}
