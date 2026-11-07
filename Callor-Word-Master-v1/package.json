@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run typecheck && next build",
-    "start": "next start -p 12320",
+    "start": "next start -p 12330",
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

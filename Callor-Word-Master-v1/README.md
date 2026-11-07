@@ -1,5 +1,13 @@
 # Callor Word Master v1
 
+## 링크 공유 미리보기
+
+- 서비스 주소: https://word.callor.com
+- `src/app/layout.tsx`에서 Open Graph 제목·설명·사이트명·언어·대표 이미지와 X의 큰 이미지 카드를 설정합니다.
+- 공유 이미지: `public/images/word-master-og.png` (1536×1024, 기존 포트폴리오 커버).
+- 다른 도메인에 배포할 때는 빌드 전에 `SITE_URL`을 해당 서비스의 절대 URL로 설정합니다. 미설정 시 `https://word.callor.com`을 사용합니다.
+- 변경 사항을 운영 사이트에 반영하려면 새 빌드를 배포해야 합니다. 공유 플랫폼의 기존 미리보기는 캐시 갱신이 필요할 수 있습니다.
+
 ## 새 개발 기준
 
 - 시작일: 2026-09-24
